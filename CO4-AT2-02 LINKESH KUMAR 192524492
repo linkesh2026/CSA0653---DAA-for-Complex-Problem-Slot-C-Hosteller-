@@ -1,0 +1,46 @@
+def knapsack(investments, profits, budget):
+    n = len(investments)
+
+    dp = [[0] * (budget + 1) for _ in range(n + 1)]
+
+    # Build DP Table
+    for i in range(1, n + 1):
+        for w in range(budget + 1):
+
+            if investments[i - 1] <= w:
+                dp[i][w] = max(
+                    dp[i - 1][w],
+                    profits[i - 1] + dp[i - 1][w - investments[i - 1]]
+                )
+            else:
+                dp[i][w] = dp[i - 1][w]
+
+    # Find selected products
+    selected = []
+    w = budget
+
+    for i in range(n, 0, -1):
+        if dp[i][w] != dp[i - 1][w]:
+            selected.append(chr(64 + i))  # A, B, C, D...
+            w -= investments[i - 1]
+
+    selected.reverse()
+
+    return dp[n][budget], selected
+
+
+# Given Data
+products = ['A', 'B', 'C', 'D']
+investments = [20000, 30000, 40000, 50000]
+profits = [25000, 40000, 50000, 65000]
+budget = 100000
+
+max_profit, selected_products = knapsack(
+    investments,
+    profits,
+    budget
+)
+
+print("Budget =", budget)
+print("Selected Products =", selected_products)
+print("Maximum Profit = ₹", max_profit)
